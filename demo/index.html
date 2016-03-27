@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Demo Document</title>
+	<style>
+
+	form {
+		font-size: 13px;
+		width: 640px;
+		margin: 5em auto;
+	}
+	th, td {
+		vertical-align: top;
+		position: relative;
+		padding: 2em 1em;
+		text-align: left;
+	}
+	th {
+		padding-top: 2.5em;
+		text-align: right;
+	}
+	input[type=text], textarea {
+		font-size: 1em;
+		padding: .5em;
+		border: 1px solid #999;
+		border-radius: .5em;
+		outline: none;
+		width: 16em;
+	}
+	textarea {
+		width: 32em;
+	}
+	input[type=text].invalid,
+	textarea.invalid {
+		border-color: #c00;
+		background-color: #fec;
+	}
+	label {
+		display: inline-block;
+		padding: .5em;
+	}
+	select {
+		margin: .5em 0;
+	}
+	input[type=submit] {
+		font-size: 1em;
+		border: none;
+		background-color: #09c;
+		color: #fff;
+		padding: .5em 1em;
+		border-radius: .3em;
+	}
+	.validation-message {
+		display: none;
+		position: absolute;
+		left: 1em;
+		margin-top: -2.8em;
+		background-color: #c90;
+		color: #fff;
+		padding: .5em 1em;
+		border-radius: .5em;
+		white-space: nowrap;
+		opacity: .9;
+	}
+	.validation-message::before {
+		position: absolute;
+		content: "";
+		display: block;
+		border: 8px solid transparent;
+		border-width: 8px 4px;
+		border-top-color: #c90;
+		left: 2em;
+		bottom: -16px;
+	}
+	.overlay {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, .8);
+		color: #fff;
+		left: 0;
+		top: 0;
+		z-index: 1;
+		white-space: pre;
+		box-sizing: border-box;
+		padding: 3em;
+		overflow: auto;
+	}
+
+	</style>
+</head>
+<body>
+
+	<form id="demo-form" action="post.php" method="POST" onsubmit="return false;">
+		<table>
+			<tr>
+				<th>Name</th>
+				<td>
+					<input type="text" name="name" data-validation="required; length(0, 10);" placeholder="John">
+				</td>
+			</tr>
+			<tr>
+				<th>Age</th>
+				<td>
+					<input type="text" name="age" data-validation="required; integer; range(20, 60)" data-filter="zenhan" placeholder="23">
+				</td>
+			</tr>
+			<tr>
+				<th>Email</th>
+				<td>
+					<input type="text" name="email" data-validation="required; email; length(0, 50)" data-filter="zenhan" placeholder="john@example.com">
+					<p>
+						Please input again.
+					</p>
+					<input type="text" name="email_confirm" data-validation="required; equals(email)" data-filter="zenhan" placeholder="john@example.com">
+				</td>
+			</tr>
+			<tr>
+				<th>Gender</th>
+				<td>
+					<div class="validation-message" data-for="gender"></div>
+					<label><input type="radio" name="gender" value="male" data-validation="required"> Male</label>
+					<label><input type="radio" name="gender" value="female" data-validation="required"> Female</label>
+				</td>
+			</tr>
+			<tr>
+				<th>Colors</th>
+				<td>
+					<div class="validation-message" data-for="colors"></div>
+					<label><input type="checkbox" name="colors" value="red" data-validation="required"> Red</label>
+					<label><input type="checkbox" name="colors" value="green"> Green</label>
+					<label><input type="checkbox" name="colors" value="blue"> Blue</label>
+				</td>
+			</tr>
+			<tr>
+				<th>Browser</th>
+				<td>
+					<select name="browser" data-validation="required">
+						<option value="">--select--</option>
+						<option value="ie">Internet Explorer</option>
+						<option value="chrome">Google Chrome</option>
+						<option value="firefox">Mozilla Firefox</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>Message</th>
+				<td>
+					<textarea name="message" data-validation="required"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th></th>
+				<td>
+					<input type="submit" value="Send">
+				</td>
+			</tr>
+		</table>
+
+	</form>
+
+
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../src/validation-form.js"></script>
+
+	<script>
+
+	// demo data
+	!function(){
+		return;
+		$.each({
+			"name": "John",
+			"age": "23",
+			"email": "foo@example.com",
+			"email_confirm": "foo@example.com",
+			"gender": "male",
+			"colors": "red",
+			"browser": "chrome",
+			"message": "Hello world"
+		}, function(key, value){
+			var input = $("[name=" + key + "]");
+			if(["radio", "checkbox"].indexOf(input.attr("type")) >= 0){
+				input.filter("[value=" + value + "]").prop("checked", true);
+				return;
+			}
+			input.val(value);
+		});
+	}();
+
+	$("#demo-form").validationForm({
+		submit: false,
+		defaultMessage: "This field is required",
+		messagePosition: "before",
+		messages: {
+			name: {
+				length: "Please input 10 characters or less"
+			},
+			age: {
+				integer: "Please input integer",
+				range: "Please input in the range from 20 to 60"
+			},
+			email: {
+				email: "Please input valid email address",
+				length: "Please input 50 characters or less"
+			},
+			email_confirm: {
+				equals: "Email address is not match"
+			}
+		}
+	})
+	.on("validated", function(){
+		$(this).submitAsync()
+		.done(function(data){
+			$("<div>", {"class": "overlay"})
+			.text(data)
+			.prependTo("body");
+		})
+		.fail(function(){
+			alert("Something wrong")
+		})
+	});
+
+	</script>
+	
+</body>
+</html>

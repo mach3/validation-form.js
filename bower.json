@@ -1,0 +1,19 @@
+{
+  "name": "validation-form",
+  "version": "0.1.0",
+  "authors": [
+    "mach3 <mach3ss@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "demo"
+  ],
+  "dependencies": {
+    "jquery": "1"
+  }
+}

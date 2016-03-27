@@ -1,0 +1,35 @@
+{
+  "name": "validation-form",
+  "version": "0.1.0",
+  "description": "Simple form validation library.",
+  "main": "dist/validation-form.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "demo": "php -S localhost:8080 -t .",
+    "build": "grunt build"
+  },
+  "author": "mach3 <mach3ss@gmail.com>",
+  "license": {
+    "type": "MIT",
+    "url": "http://mach3.mit-license.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/mach3/validation-form.js.git"
+  },
+  "dependencies": {
+    "jquery": "^1"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^1.0.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "load-grunt-tasks": "^3.4.1"
+  },
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "package.json"
+  ]
+}
